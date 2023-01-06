@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect, useRef } from 'preact/hooks'
-import { signal, useComputed } from '@preact/signals'
+import { useState, useCallback, useEffect, useRef, useId } from 'preact/hooks'
+import { useComputed } from '@preact/signals'
+import AppState from './AppState'
 import './app.css'
 
 function Slider(props) {
@@ -44,43 +45,24 @@ function Explanation(props) {
   )
 }
 
-let lastModelId = 0;
-class SliderModel {
-  _uid
-  _state
-  constructor({ title = '', description = '', value = 0 } = {}) {
-    this._uid = lastModelId++
-    this._state = signal({ title, description, value })
+function PresetSelector() {
+  const options = AppState.Presets.keys.map((key) => {
+    const preset = AppState.Presets[key]
+    return (
+      <option value={key}>{preset.name}</option>
+    )
+  })
+  const onChange = (evt) => {
+    AppState.setPreset(evt.target.value)
   }
-  _setState(override) {
-    this._state.value = { ...this._state.value, ...override }
-  }
-  get uid() { return this._uid }
-  get title() { return this._state.value.title }
-  set title(val) { this._setState({ title: val }) }
-  get description() { return this._state.value.description }
-  set description(val) { this._setState({ description: val }) }
-  get value() { return this._state.value.value }
-  set value(val) { this._setState({ value: val }) }
-
-  delete() {
-    const old = AppState.sliders.value
-    const idx = old.indexOf(this)
-    AppState.sliders.value = old.slice(0, idx).concat(old.slice(idx + 1))
-  }
-}
-
-const AppState = {
-  sliders: signal([new SliderModel({
-    title: 'UX',
-    description: 'The user experience is key in making users passionate about the product.'
-  }), new SliderModel({
-    title: 'Quality',
-    description: 'Higher-quality products win when price is roughly the same.'
-  }), new SliderModel({
-    title: 'Price',
-    description: 'Cheaper prices might attract more users, but might also limit the product\'s value.'
-  })])
+  return (
+    <span class="controls">
+      <label for="preset" title="Replace sliders with a preset.">Presets</label>
+      <select name="preset" title="Replace sliders with a preset." onChange={onChange}>
+        {options}
+      </select>
+    </span>
+  )
 }
 
 export function App() {
@@ -88,8 +70,7 @@ export function App() {
   const sliders = AppState.sliders
 
   const createSlider = () => {
-    const model = new SliderModel()
-    sliders.value = sliders.value.concat([model])
+    const model = AppState.addSlider()
     setCreated(model.uid)
   }
   useEffect(() => {
@@ -105,10 +86,10 @@ export function App() {
     }
   }, [created])
 
-  const [limit, setLimit] = useState(4)
+  const limit = AppState.limit
   const slidersRef = useRef()
   function changeLimit(evt) {
-    setLimit(evt.target.value || 0)
+    AppState.limit = (evt.target.value || 0)
   }
   useEffect(() => {
     const childWidth = slidersRef.current?.children[0]?.offsetWidth + 4;
@@ -122,8 +103,11 @@ export function App() {
         Sliders
         <span class="controls">
           <button title="new" onClick={createSlider}>+</button>
+        </span>
+        <span class="controls">
           <input type="number" title="limit" value={limit} onInput={changeLimit} /> per row
         </span>
+        <PresetSelector />
       </h2>
       <section class="sliders" ref={slidersRef}>
         {sliders.value.map((el, idx) => <Slider key={el.uid} model={el} />)}
