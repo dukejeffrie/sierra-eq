@@ -32,6 +32,16 @@ body {
   min-height: 100vh;
 }
 
+@media print {
+  :root {
+    font-size: 14px;
+  }
+
+  body {
+    padding: 0;
+  }
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

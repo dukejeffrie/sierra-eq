@@ -35,11 +35,16 @@ function Explanation(props) {
   const title = useComputed(() => model.title || 'Untitled')
   const placeholder = useComputed(() => `explanation for ${title}`)
 
+  function updateDescription(evt) {
+    model.description = evt.target.value
+  }
+
   return (
     <div class="slider-explanation">
       <h3 class="title">{title} ({model.value})</h3>
       <div class="explanation">
-        <textarea placeholder={placeholder} value={model.description} />
+        <textarea class="text" placeholder={placeholder} value={model.description} onInput={updateDescription} />
+        <div class="print">{model.description}</div>
       </div>
     </div>
   )
@@ -62,6 +67,21 @@ function PresetSelector() {
         {options}
       </select>
     </span>
+  )
+}
+
+
+function Briefing() {
+  const [briefing, setBriefing] = useState('')
+  function updateBriefing(evt) {
+    setBriefing(evt.target.value)
+  }
+  return (
+    <section class="briefing">
+      <p>Describe what our goal with the sliders is.</p>
+      <textarea class="text" name="briefing" value={briefing} onInput={updateBriefing} placeholder="What we are trying to evaluate today is..." />
+      <div class="print">{briefing}</div>
+    </section>
   )
 }
 
@@ -100,6 +120,10 @@ export function App() {
   return (
     <>
       <h2>
+        Briefing
+      </h2>
+      <Briefing />
+      <h2>
         Sliders
         <span class="controls">
           <button title="new" onClick={createSlider}>+</button>
@@ -114,6 +138,7 @@ export function App() {
       </section>
       <h2>Explanations</h2>
       <section class="explanations">
+        <p>Describe how we arrived at each value and what it means.</p>
         {sliders.value.map(el => <Explanation key={el.uid} model={el} />)}
       </section>
     </>

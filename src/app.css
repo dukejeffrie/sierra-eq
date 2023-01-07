@@ -16,30 +16,29 @@
   display: flex;
   flex-direction: column;
   place-items: center;
-  width: 7em;
+  width: 8em;
 }
 
-.slider input,
-.explanation textarea {
+.slider input {
   border: none;
   background-color: transparent;
 }
 
-.slider input:hover,
-.explanation textarea:hover {
+.slider input:hover {
   background-color: white;
 }
 
 
-.slider input:focus,
-.explanation textarea:focus {
+select:focus,
+input:focus,
+.text:focus {
   background-color: white;
   outline-width: 1px;
   outline-color: lightseagreen;
 }
 
 .card {
-  padding: 1em;
+  padding: 2px;
   background-color: #f0f0f0;
   border-radius: 4px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
@@ -54,7 +53,7 @@
   font-family: sans-serif;
   font-size: 1.2em;
   font-weight: bold;
-  width: 100%;
+  width: 6em;
 }
 
 .slider-value {
@@ -92,8 +91,8 @@
 button.delete {
   border-color: transparent;
   border-radius: 3px;
-  top: -7px;
-  right: -7px;
+  top: -1px;
+  right: -1px;
   align-self: flex-end;
   position: relative;
 }
@@ -102,15 +101,42 @@ button.delete:hover {
   border-color: gray;
 }
 
-.explanations {
-  margin-top: 3em;
-}
-
 .slider-explanation>.title {
   margin-bottom: 0;
 }
 
-.slider-explanation>.explanation>textarea {
-  width: 100%;
-  height: 5em;
+.text {
+  width: 60rem;
+}
+
+.explanation>.text {
+  min-height: 5em;
+}
+
+.briefing>.text {
+  min-height: 10rem;
+}
+
+.print {
+  display: none;
+}
+
+@media print {
+
+  .sliders,
+  .slider-explanation {
+    break-inside: avoid;
+  }
+
+  .footer,
+  .text,
+  .controls,
+  .delete {
+    display: none;
+  }
+
+  .print {
+    display: block;
+    white-space: pre-wrap;
+  }
 }
