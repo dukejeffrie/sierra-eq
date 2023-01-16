@@ -66,7 +66,7 @@ function startupSliders() {
 
 const Presets = {
   DEFAULT: { name: 'default', generator: defaultSliders },
-  STARTUP: { name: 'Startup validation', generator: startupSliders },
+  STARTUP: { name: 'Business ideation', generator: startupSliders },
   keys: Object.freeze(['DEFAULT', 'STARTUP'])
 }
 
